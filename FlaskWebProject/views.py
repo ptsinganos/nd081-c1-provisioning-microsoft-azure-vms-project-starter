@@ -34,9 +34,9 @@ def new_post():
     if form.validate_on_submit():
         post = Post()
         post.save_changes(form, request.files['image_path'], current_user.id, new=True)
-        app.logger.DEBUG('Added new post!')
+        app.logger.info('Added new post!')
         return redirect(url_for('home'))
-    app.logger.WARNING('Add new post failed!')
+    app.logger.warning('Add new post failed!')
     return render_template(
         'post.html',
         title='Create Post',
@@ -63,14 +63,14 @@ def post(id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        app.logger.DEBUG('Successful login!')
+        app.logger.info('Successful login!')
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
-            app.logger.WARNING('Login failed!')
+            app.logger.warning('Login failed!')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -100,7 +100,7 @@ def authorized():
         session["user"] = result.get("id_token_claims")
         # Note: In a real app, we'd use the 'name' property from session["user"] below
         # Here, we'll use the admin username for anyone who is authenticated by MS
-        user = User.query.filter_by(username="admin").first()
+        user = User.query.filter_by(username=session['user'].name).first()
         login_user(user)
         _save_cache(cache)
     return redirect(url_for('home'))
