@@ -74,7 +74,7 @@ def login():
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('home')
-        app.logger.warning('Login successfully!')
+        app.logger.warning(f'Login successfully! {user}')
         return redirect(next_page)
     session["state"] = str(uuid.uuid4())
     auth_url = _build_auth_url(scopes=Config.SCOPE, state=session["state"])
@@ -99,7 +99,6 @@ def authorized():
         if "error" in result:
             return render_template("auth_error.html", result=result)
         session["user"] = result.get("id_token_claims")
-        app.logger.info(session['user'])
         # Note: In a real app, we'd use the 'name' property from session["user"] below
         # Here, we'll use the admin username for anyone who is authenticated by MS
         user = User.query.filter_by(username=session['user']['name']).first()
@@ -108,6 +107,7 @@ def authorized():
             user.set_password(session['user']['sub'])
             db.session.add(user)
             db.session.commit()
+        app.logger.info(f'Login successfully! {user}')
 
         login_user(user)
         _save_cache(cache)
