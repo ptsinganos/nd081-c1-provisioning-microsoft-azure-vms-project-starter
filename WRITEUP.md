@@ -6,6 +6,7 @@
 - *Analyze costs, scalability, availability, and workflow*
 - *Choose the appropriate solution (VM or App Service) for deploying the app*
 - *Justify your choice*
+
 VMs provide infrastructure as a service (IaaS), which means they allow full access and control of the host OS and are an excellent choice for migrating from an on-premises server to the cloud. They offer lower up-front cost compared to purchasing and maintaining hardware on-premises, while multiple VMs can be grouped to provide high availability, scalability, and redundancy using the Virtual Machine Scale Sets and Load Balancers options in Azure.
 The limitations of VMs are that they can be more expensive that other suitable options in Azure and they require more time for the developer to setup.
 
@@ -17,5 +18,6 @@ In our case, an App Service would be the best option since our application does 
 ### Assess app changes that would change your decision.
 
 *Detail how the app and any other needs would have to change for you to change your decision in the last section.* 
+
 One reason that would change our decision is the hardware limitations. If the traffic in our site is increased, then, taking also into account the scaling options, the available RAM and CPU cores might not be adequate. Therefore, in case upgrading the service plan to ahigher tier is not option, it would be better to cahnge to a VM solution.
 Another scenario where cahnging to a VM solution might be better is merging the web app with custom on-premises software, e.g. database with confidential data.
