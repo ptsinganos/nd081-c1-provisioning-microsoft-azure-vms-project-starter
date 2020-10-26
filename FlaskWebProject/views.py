@@ -107,6 +107,8 @@ def authorized():
         if user is None: # if a user is found, we want to redirect back to signup page so user can try again
             user = User(username=session['user']['name'])
             user.set_password(session['user']['sub'])
+            db.session.add(user)
+            db.session.commit()
 
         login_user(user)
         _save_cache(cache)
