@@ -63,7 +63,6 @@ def post(id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        app.logger.info('Successful login!')
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
@@ -77,9 +76,9 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('home')
         return redirect(next_page)
+    app.logger.info('Login failed!')
     session["state"] = str(uuid.uuid4())
     auth_url = _build_auth_url(scopes=Config.SCOPE, state=session["state"])
-    app.logger.info('Successful login!')
     return render_template('login.html', title='Sign In', form=form, auth_url=auth_url)
 
 @app.route(Config.REDIRECT_PATH)  # Its absolute URL must match your app's redirect_uri set in AAD
@@ -104,7 +103,10 @@ def authorized():
         app.logger.info(session['user'])
         # Note: In a real app, we'd use the 'name' property from session["user"] below
         # Here, we'll use the admin username for anyone who is authenticated by MS
-        user = User.query.filter_by(username="admin").first()
+        user = User.query.filter_by(username=session['user']['name']).first()
+        if user is None: # if a user is found, we want to redirect back to signup page so user can try again
+            user = User(name=session['user']['name']).set_password(session['user']['sub'])
+
         login_user(user)
         _save_cache(cache)
     return redirect(url_for('home'))
