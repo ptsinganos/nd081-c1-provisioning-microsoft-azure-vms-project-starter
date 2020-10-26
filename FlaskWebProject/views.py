@@ -36,7 +36,6 @@ def new_post():
         post.save_changes(form, request.files['image_path'], current_user.id, new=True)
         app.logger.info('Added new post!')
         return redirect(url_for('home'))
-    app.logger.warning('Add new post failed!')
     return render_template(
         'post.html',
         title='Create Post',
@@ -75,6 +74,7 @@ def login():
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('home')
+        app.logger.warning('Login successfully!')
         return redirect(next_page)
     session["state"] = str(uuid.uuid4())
     auth_url = _build_auth_url(scopes=Config.SCOPE, state=session["state"])
