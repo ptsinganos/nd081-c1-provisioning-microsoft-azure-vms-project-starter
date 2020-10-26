@@ -105,7 +105,8 @@ def authorized():
         # Here, we'll use the admin username for anyone who is authenticated by MS
         user = User.query.filter_by(username=session['user']['name']).first()
         if user is None: # if a user is found, we want to redirect back to signup page so user can try again
-            user = User(username=session['user']['name']).set_password(session['user']['sub'])
+            user = User(username=session['user']['name'])
+            user.set_password(session['user']['sub'])
 
         login_user(user)
         _save_cache(cache)
